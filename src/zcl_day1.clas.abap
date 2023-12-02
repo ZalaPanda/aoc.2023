@@ -1,10 +1,9 @@
-class zcl_day1 definition public final create public .
-
+CLASS zcl_day1 DEFINITION PUBLIC FINAL CREATE PUBLIC.
   PUBLIC SECTION.
-    CLASS-METHODS part1 IMPORTING use_sample        TYPE abap_bool OPTIONAL
+    CLASS-METHODS part1 IMPORTING use_sample    TYPE abap_bool OPTIONAL
                         RETURNING VALUE(result) TYPE i.
 
-    CLASS-METHODS part2 IMPORTING use_sample        TYPE abap_bool OPTIONAL
+    CLASS-METHODS part2 IMPORTING use_sample    TYPE abap_bool OPTIONAL
                         RETURNING VALUE(result) TYPE i.
 
   PRIVATE SECTION.
@@ -13,7 +12,7 @@ class zcl_day1 definition public final create public .
     CLASS-METHODS get_puzzle_input   RETURNING VALUE(result) TYPE string_table.
 
     CLASS-METHODS get_digit
-      IMPORTING line        TYPE string
+      IMPORTING !line        TYPE string
                 letters      TYPE string_table OPTIONAL
       RETURNING VALUE(digit) TYPE i.
 ENDCLASS.
@@ -22,6 +21,7 @@ ENDCLASS.
 CLASS zcl_day1 IMPLEMENTATION.
   METHOD part1.
     TYPES integer_table TYPE TABLE OF i WITH DEFAULT KEY.
+
     DATA(lines) = SWITCH string_table( use_sample WHEN abap_true THEN get_puzzle_sample1( ) ELSE get_puzzle_input( ) ).
     DATA(digits) = VALUE integer_table( FOR line IN lines
                                         ( zcl_day1=>get_digit( line ) * 10 + zcl_day1=>get_digit( reverse( line ) ) ) ).
@@ -31,9 +31,11 @@ CLASS zcl_day1 IMPLEMENTATION.
 
   METHOD part2.
     TYPES integer_table TYPE TABLE OF i WITH DEFAULT KEY.
+
     DATA(letters_normal) = VALUE string_table( ).
     SPLIT 'one,two,three,four,five,six,seven,eight,nine' AT ',' INTO TABLE letters_normal.
-    DATA(letters_reverse) = VALUE string_table( FOR letter IN letters_normal ( reverse( letter ) ) ).
+    DATA(letters_reverse) = VALUE string_table( FOR letter IN letters_normal
+                                                ( reverse( letter ) ) ).
     DATA(lines) = SWITCH string_table( use_sample WHEN abap_true THEN get_puzzle_sample2( ) ELSE get_puzzle_input( ) ).
     DATA(digits) = VALUE integer_table( FOR line IN lines
                                         ( zcl_day1=>get_digit( line    = line
@@ -41,6 +43,7 @@ CLASS zcl_day1 IMPLEMENTATION.
                                           zcl_day1=>get_digit( line    = reverse( line )
                                                                letters = letters_reverse ) ) ).
     result = REDUCE i( INIT sum = 0 FOR digit IN digits NEXT sum = sum + digit ).
+    WRITE / result.
   ENDMETHOD.
 
   METHOD get_digit.
@@ -76,7 +79,8 @@ CLASS zcl_day1 IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_puzzle_input.
-    SPLIT |qzjggk1one,two2seven7,vszthreetwo6threethree4two3,zcsvvlslqvfive11chhzmdjdgz8vbgldl,jjsmsksvbr77cfdrdseven1zd,947lkkgznlhxseventwo,8twohprsxmz47,five11eight1,seventhree1eightztszfourfivesix,cbcvd9,hg91fourhhpvkrxbn,1mqbdkqxnine817four,btr| &&
+    SPLIT
+|qzjggk1one,two2seven7,vszthreetwo6threethree4two3,zcsvvlslqvfive11chhzmdjdgz8vbgldl,jjsmsksvbr77cfdrdseven1zd,947lkkgznlhxseventwo,8twohprsxmz47,five11eight1,seventhree1eightztszfourfivesix,cbcvd9,hg91fourhhpvkrxbn,1mqbdkqxnine817four,btr| &&
 |4seventhree7hbkkg,4fivegtbqthreeeight421six,ninefivekd7,9onetwofprmrhmonedb,threemtmjpfzqkdnlpl81one,six7eight5,twonkhnine22fivep9two,qfqtkz9fivetst,rkzxrhvsgonerqqkpf7nined,fivezg8jmf6hrxnhgxxttwoneg,21nine9two2tfmfxjrvkznkjzs,rhcdx54,jhnpkkp5seve| &&
 |n,one8xrjsk9rrgkt,nine58,1twohphpl,eight3pfzvrt9msgxtrbdclsix5,874eighttcpzdbrlj,qlxkgtwo9,ninedbvone1sixlnzdccpsixgzrfdnddmtgf,7eightppzmhmpn4bvvxp39sspf,four48rvhnzsnzmjxrl258,342,three2mmqxh391,eight7vcmhfqznbccrvl4onehfqmjone1,6kgchb4xggs75two,| &&
 |five6ntbssixvvtvs8spgdxl1six,one7one,27three2seven,rbmgfive4snq,four239threenineeightzrbvbgthree,two4one3,sixcpcthzvczjp725,fjninetwo6,seventwonine7,1twoonepzrjzsdfourdbdrxg1,vzskvvbtjfeight2sltfdnine,oneeightfive3lthns49,cxkqdgrftbhzsnine6,onethre| &&
@@ -165,4 +169,4 @@ CLASS zcl_day1 IMPLEMENTATION.
 |qtqbg1,gttsix2567|
           AT ',' INTO TABLE result.
   ENDMETHOD.
-endclass.
+ENDCLASS.
